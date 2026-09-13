@@ -349,6 +349,11 @@ var APP = APP || {
     },
     nextTurn: function(gameState) {
         var player = APP.players[this.currentPlayerArrPos()];
+        // nextTurn 负责“结束当前回合 → 切换到下一位”，
+        // 因此下面的 UI 展示必须以下一位玩家的赛道状态为准（修复：快车道玩家结束后，
+        // 下一位老鼠赛道玩家被错误展示成快车道按钮，导致掷骰子掷错棋盘）
+        var nextPlayerArrPos = (APP.currentPlayer < APP.pCount) ? APP.currentPlayer : 0;
+        var nextPlayer = APP.players[nextPlayerArrPos];
 
         $("#finish-instructions").hide();
         $("#finish-turn-container").hide();
@@ -385,7 +390,7 @@ var APP = APP || {
             $(coinRowClass).hide();
         }
         
-        if (player.fastTrack == false) {
+        if (nextPlayer.fastTrack == false) {
             if (APP.dreamPhase.dreamPhaseOn == false) {
                 $("#card-btns").show();
                 $("#roll-btn").show();
@@ -404,7 +409,7 @@ var APP = APP || {
             $("#liability-table").show();
             $("#ft-statement").hide();
 
-            if (player.fastTrackOption == true) {
+            if (nextPlayer.fastTrackOption == true) {
                 $("#ft-enter-btn").show();
             } else {
                 $("#ft-enter-btn").hide();
